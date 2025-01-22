@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Check</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f8ff;
+    }
+
+    .container {
+      text-align: center;
+      border: 2px solid #ff0004;
+      border-radius: 10px;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+
+    .weather-box input {
+      padding: 10px;
+      width: 200px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .weather-box button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background-color: #00aaff;
+      color: white;
+    }
+
+    .weather-box button:hover {
+      background-color: hsl(187, 100%, 40%);
+    }
+
+    #weather-info {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Weather Checker, by Devansh</h1>
+    <div class="weather-box">
+      <input type="text" id="city" placeholder="Enter city name" />
+      <button onclick="getWeather()">Check Weather</button>
+      <div id="weather-info"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "d31f5d420b6c467c9a8180040252101"; // Your WeatherAPI Key
+    const apiUrl = "http://api.weatherapi.com/v1/current.json?key=" + apiKey + "&q=";
+
+    function getWeather() {
+      const city = document.getElementById('city').value;
+
+      if (!city) {
+        alert('Please enter a city name');
+        return;
+      }
+
+      const url = apiUrl + city + "&aqi=yes";
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data); // Debug: Log the full API response
+
+          if (data.error) {
+            // If there is an error (e.g., city not found), display the error message
+            document.getElementById('weather-info').innerHTML = `<p>${data.error.message}</p>`;
+          } else {
+            // Display the weather information
+            const weatherInfo = `
+              <h2>${data.location.name}, ${data.location.country}</h2>
+              <p>Temperature: ${data.current.temp_c}°C</p>
+              <p>Weather: ${data.current.condition.text}</p>
+              <p>Humidity: ${data.current.humidity}%</p>
+              <p>Wind: ${data.current.wind_kph} kph</p>
+            `;
+            document.getElementById('weather-info').innerHTML = weatherInfo;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+          document.getElementById('weather-info').innerHTML = `<p>Error fetching data. Please try again later.</p>`;
+        });
+    }
+  </script>
+
+</body>
+</html>
